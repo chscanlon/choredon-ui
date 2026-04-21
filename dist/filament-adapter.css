@@ -1,0 +1,124 @@
+/*
+ * Choredon → Filament adapter.
+ *
+ * Usage in smart-salon:
+ *
+ *   1. Generate a custom Filament theme for your panel:
+ *        php artisan make:filament-theme admin
+ *
+ *      (Replace 'admin' with the panel name.)
+ *
+ *   2. In resources/css/filament/admin/theme.css, AFTER Filament's own imports:
+ *        @import 'tailwindcss';
+ *        @import '../../../../vendor/filament/filament/resources/css/theme.css';
+ *        @import '../../../../vendor/choredon/ui/dist/choredon.css';
+ *        @import '../../../../vendor/choredon/ui/dist/filament-adapter.css';
+ *
+ *   3. In your Panel Provider, register Choredon's colour roles:
+ *        use Choredon\Ui\Filament\ChoredonColors;
+ *        $panel->colors(ChoredonColors::forPanel())
+ *              ->viteTheme('resources/css/filament/admin/theme.css');
+ *
+ * Colour roles are handled by ChoredonColors::forPanel() in PHP.
+ * This file handles everything colour roles don't cover: typography,
+ * page/surface backgrounds, sidebar treatment, and targeted component tweaks.
+ */
+
+@theme {
+  /* Typography. Filament defaults to Inter; we set display + ui fonts from Choredon. */
+  --font-sans:  var(--font-ui);
+  --font-serif: var(--font-display);
+
+  /* Radii. Align Filament's rounded utilities with Choredon's restrained radius scale. */
+  --radius-xs: var(--radius-none);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+}
+
+/*
+ * Page background.
+ *
+ * Filament's default is gray-50 (which, via the colour role mapping, now means
+ * Choredon's neutral-50 — a pale Vellum variant). That's already in the right
+ * tonal family. We don't need to override it.
+ *
+ * However, for stylist-facing admin pages we want a slightly warmer surface
+ * to differentiate admin from the customer surface. Using neutral-100 (Vellum)
+ * as the page background makes Filament feel like it belongs to Choredon
+ * rather than sitting on a generic pale surface.
+ */
+.fi-body {
+  background-color: var(--color-surface-base);
+}
+
+/*
+ * Sidebar. Filament's sidebar defaults to white. Against a Vellum page,
+ * a slightly raised Vellum reads as coherent rather than isolated.
+ */
+.fi-sidebar {
+  background-color: var(--color-surface-raised);
+  border-right: 1px solid var(--color-border-subtle);
+}
+
+/*
+ * Topbar. Same treatment as sidebar for visual continuity.
+ */
+.fi-topbar {
+  background-color: var(--color-surface-raised);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+/*
+ * Section surfaces (resource tables, form sections, modals). Filament uses
+ * white by default. Lift them slightly above the Vellum page with the
+ * raised surface tone so cards have visual hierarchy.
+ */
+.fi-section,
+.fi-modal-window,
+.fi-dropdown-panel {
+  background-color: var(--color-surface-raised);
+  border-color: var(--color-border-subtle);
+}
+
+/*
+ * Table row striping. Filament alternates white / gray-50 by default.
+ * With the colour role mapping applied, gray-50 is already Choredon's
+ * neutral-50, which pairs with surface-raised cleanly. No override needed,
+ * but left as a placeholder for future refinements.
+ */
+
+/*
+ * Input wells. Filament form inputs default to white. Using the sunk surface
+ * tone gives them the "pressed into the page" feel that matches Choredon's
+ * restrained aesthetic.
+ */
+.fi-input,
+.fi-select-input,
+.fi-textarea {
+  background-color: var(--color-surface-sunk);
+}
+
+/*
+ * Heading treatment. Filament uses Inter for everything including page titles.
+ * Choredon reserves the display serif (Fraunces) for headings, which gives
+ * admin pages an editorial warmth that matches the brand principle
+ * ("Would someone who makes beautiful things feel at home here?").
+ */
+.fi-header-heading,
+.fi-section-header-heading,
+.fi-modal-heading {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.005em;
+}
+
+/*
+ * Page-level page headings get slightly more weight in the letter-spacing
+ * department to match Choredon's heading-1/2 treatment.
+ */
+.fi-page .fi-header-heading {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}

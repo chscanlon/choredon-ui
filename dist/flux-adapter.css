@@ -1,0 +1,93 @@
+/*
+ * Choredon → Flux adapter.
+ *
+ * Import AFTER flux.css and AFTER choredon.css in your app.css:
+ *
+ *   @import 'tailwindcss';
+ *   @import '../../vendor/livewire/flux-pro/dist/flux.css';
+ *   @import '../../vendor/choredon/ui/dist/choredon.css';
+ *   @import '../../vendor/choredon/ui/dist/flux-adapter.css';
+ *
+ * What this file does:
+ *  1. Remaps Flux's base colour (Tailwind's zinc ramp) onto Choredon's warm-neutral ramp.
+ *     Every Flux component that uses zinc-50 through zinc-950 picks up Choredon's tonal
+ *     direction without modification.
+ *  2. Sets Flux's accent colours (--color-accent, --color-accent-content,
+ *     --color-accent-foreground) to Choredon's Triangle / Deep / on-primary tokens.
+ *  3. Sets Tailwind's --font-sans, radii, and other design primitives to Choredon values.
+ *
+ * Dark mode: v0.1 of Choredon does not provide a dark theme. Flux's dark mode will
+ * fall through to Flux's default behaviour against Choredon's light-mode tokens, which
+ * will look wrong. If users need dark mode, either disable Flux's dark appearance
+ * toggle in the consumer app, or wait for Choredon v0.2 which will add a dark theme.
+ */
+
+@theme {
+  /* ---------- Base ramp (replaces Flux's zinc reliance) ---------- */
+  --color-zinc-50:  var(--palette-neutral-50);
+  --color-zinc-100: var(--palette-neutral-100);
+  --color-zinc-200: var(--palette-neutral-200);
+  --color-zinc-300: var(--palette-neutral-300);
+  --color-zinc-400: var(--palette-neutral-400);
+  --color-zinc-500: var(--palette-neutral-500);
+  --color-zinc-600: var(--palette-neutral-600);
+  --color-zinc-700: var(--palette-neutral-700);
+  --color-zinc-800: var(--palette-neutral-800);
+  --color-zinc-900: var(--palette-neutral-900);
+  --color-zinc-950: var(--palette-neutral-950);
+
+  /* ---------- Accent ---------- */
+  --color-accent:            var(--color-interactive-primary);
+  --color-accent-content:    var(--color-interactive-primary-hover);
+  --color-accent-foreground: var(--color-text-on-primary);
+
+  /* ---------- Font ---------- */
+  --font-sans:  var(--font-ui);
+  --font-serif: var(--font-display);
+  --font-mono:  var(--font-mono);
+
+  /* ---------- Radii (map Tailwind v4 names to Choredon values) ---------- */
+  --radius-xs: var(--radius-none);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  /* --radius-2xl and above fall through to Tailwind defaults; not used by Flux */
+
+  /* ---------- Semantic feedback colours (for callouts, toasts, etc.) ---------- */
+  /* Flux doesn't ship a single canonical set of semantic variable names, but
+     components like callouts read Tailwind's red/amber/green/blue palettes.
+     We nudge those toward Choredon's feedback tokens so callout backgrounds
+     and borders stay coherent with the Choredon palette. Conservative mapping:
+     only remap the stops Flux is known to reach for. */
+  --color-red-500:   var(--color-feedback-critical);
+  --color-red-600:   var(--palette-underspot);
+  --color-amber-500: var(--color-feedback-warning);
+  --color-green-600: var(--color-feedback-success);
+  --color-blue-600:  var(--color-feedback-info);
+}
+
+/*
+ * Selectively re-tone Flux's surface defaults.
+ *
+ * Flux assumes a white page background in light mode. Choredon's page background
+ * is Vellum. Most components recolour correctly via the zinc remap above, but a
+ * few read `bg-white` directly. Override those to use Choredon's raised surface
+ * colour so cards don't pop out against the Vellum page.
+ */
+@layer utilities {
+  .bg-white {
+    background-color: var(--color-surface-raised);
+  }
+}
+
+/*
+ * Body defaults. Flux leaves these to the host app, but setting them here means
+ * consumers don't have to do it themselves and the reference pages look right
+ * as soon as the adapter is loaded.
+ */
+html {
+  background-color: var(--color-surface-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+}

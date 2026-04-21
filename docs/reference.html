@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choredon Design System — Reference v0.1.0</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../dist/choredon.css">
+
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--color-surface-base);
+    color: var(--color-text-primary);
+    font-family: var(--font-ui);
+    font-size: var(--type-scale-body-size);
+    line-height: var(--type-scale-body-line-height);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .container {
+    max-width: var(--size-max-content);
+    margin: 0 auto;
+    padding: var(--spacing-section) var(--spacing-6);
+  }
+
+  /* Layout */
+  .section {
+    margin-bottom: var(--spacing-section);
+    padding-bottom: var(--spacing-12);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-8);
+  }
+  .section-number {
+    font-family: var(--font-ui);
+    font-size: var(--type-scale-caption-size);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    font-weight: var(--font-weight-medium);
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: var(--type-scale-heading-2-size);
+    line-height: var(--type-scale-heading-2-line-height);
+    letter-spacing: var(--type-scale-heading-2-letter-spacing);
+    font-weight: var(--type-scale-heading-2-weight);
+    margin: 0;
+  }
+
+  .lead {
+    font-family: var(--font-display);
+    font-size: var(--type-scale-body-lg-size);
+    line-height: var(--type-scale-body-lg-line-height);
+    color: var(--color-text-secondary);
+    font-style: italic;
+    max-width: var(--size-max-prose);
+    margin: 0 0 var(--spacing-6);
+  }
+
+  /* Masthead */
+  .masthead {
+    padding: var(--spacing-section) 0 var(--spacing-section-sm);
+    margin-bottom: var(--spacing-section);
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  .masthead-rule {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--type-scale-caption-size);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    padding-bottom: var(--spacing-4);
+    margin-bottom: var(--spacing-8);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+  .masthead-title {
+    font-family: var(--font-display);
+    font-size: var(--type-scale-display-size);
+    line-height: var(--type-scale-display-line-height);
+    letter-spacing: var(--type-scale-display-letter-spacing);
+    font-weight: var(--type-scale-display-weight);
+    margin: 0 0 var(--spacing-4);
+  }
+  .masthead-sub {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--type-scale-body-lg-size);
+    color: var(--color-text-secondary);
+    max-width: var(--size-max-prose);
+    margin: 0;
+  }
+
+  /* Colour swatches */
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--spacing-3);
+  }
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-surface-raised);
+  }
+  .swatch-chip {
+    height: 88px;
+    width: 100%;
+  }
+  .swatch-meta {
+    padding: var(--spacing-3) var(--spacing-4);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .swatch-name {
+    font-size: var(--type-scale-body-sm-size);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+  }
+  .swatch-role {
+    font-size: var(--type-scale-caption-size);
+    color: var(--color-text-tertiary);
+  }
+  .swatch-hex {
+    font-family: var(--font-mono);
+    font-size: var(--type-scale-caption-size);
+    color: var(--color-text-secondary);
+    margin-top: 2px;
+  }
+
+  /* Typography specimens */
+  .type-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: var(--spacing-6);
+    padding: var(--spacing-4) 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+    align-items: baseline;
+  }
+  .type-row:last-child { border-bottom: none; }
+  .type-label {
+    font-size: var(--type-scale-caption-size);
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .type-specimen {
+    font-family: var(--font-display);
+    color: var(--color-text-primary);
+  }
+  .type-specimen.ui {
+    font-family: var(--font-ui);
+  }
+
+  /* Spacing visualisation */
+  .spacing-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+  .spacing-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: var(--spacing-4);
+    align-items: center;
+  }
+  .spacing-label {
+    font-size: var(--type-scale-body-sm-size);
+    font-family: var(--font-mono);
+    color: var(--color-text-secondary);
+  }
+  .spacing-bar {
+    background: var(--color-interactive-primary);
+    height: 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Radius */
+  .radius-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--spacing-4);
+  }
+  .radius-specimen {
+    aspect-ratio: 1;
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border-default);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: var(--spacing-3);
+  }
+  .radius-specimen-label {
+    font-size: var(--type-scale-caption-size);
+    font-family: var(--font-mono);
+    color: var(--color-text-secondary);
+  }
+
+  /* Triangle motif */
+  .motif-strip {
+    background: var(--color-surface-inverse);
+    padding: var(--spacing-6) var(--spacing-8);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    gap: var(--spacing-3);
+    overflow: hidden;
+  }
+  .triangle {
+    width: 0;
+    height: 0;
+    border-left-style: solid;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-left-color: transparent;
+    border-right-color: transparent;
+  }
+
+  /* Shadows */
+  .shadow-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--spacing-6);
+  }
+  .shadow-specimen {
+    aspect-ratio: 4/3;
+    background: var(--color-surface-raised);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: var(--spacing-3);
+  }
+  .shadow-sm { box-shadow: var(--shadow-sm); }
+  .shadow-md { box-shadow: var(--shadow-md); }
+  .shadow-lg { box-shadow: var(--shadow-lg); }
+
+  /* Two-column layout */
+  .cols-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
+  }
+  @media (min-width: 768px) {
+    .cols-2 { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* Subsection */
+  .subsection-title {
+    font-family: var(--font-display);
+    font-size: var(--type-scale-heading-5-size);
+    line-height: var(--type-scale-heading-5-line-height);
+    font-weight: var(--type-scale-heading-5-weight);
+    margin: 0 0 var(--spacing-4);
+  }
+
+  /* Footer */
+  footer {
+    padding: var(--spacing-section-sm) 0 var(--spacing-8);
+    margin-top: var(--spacing-section);
+    border-top: 1px solid var(--color-border-default);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: var(--type-scale-caption-size);
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div class="masthead-rule">
+      <span>Design System Reference</span>
+      <span>№ 001 · v0.1.0 · Draft</span>
+      <span>Confidential</span>
+    </div>
+    <h1 class="masthead-title">choredon</h1>
+    <p class="masthead-sub">
+      The token foundation. Every value that drives the system, rendered here to see before anything gets built on top.
+    </p>
+  </header>
+
+  <!-- 01 · PALETTE -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-number">01</span>
+      <h2 class="section-title">Palette</h2>
+    </div>
+    <p class="lead">The six brand colours from the butterfly, plus the derived tones needed to make a working system. Components never reference these directly: they read through semantic roles below.</p>
+
+    <h3 class="subsection-title" style="margin-top: var(--spacing-8);">Brand</h3>
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-wingbase);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Wingbase</span>
+          <span class="swatch-role">Base</span>
+          <span class="swatch-hex">#0A0D14</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-deep);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Deep</span>
+          <span class="swatch-role">Primary</span>
+          <span class="swatch-hex">#0E5F82</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-triangle);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Triangle</span>
+          <span class="swatch-role">Signature</span>
+          <span class="swatch-hex">#1E8FB8</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-iridescent);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Iridescent</span>
+          <span class="swatch-role">Highlight</span>
+          <span class="swatch-hex">#3DB5DC</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-underspot);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Underspot</span>
+          <span class="swatch-role">Accent</span>
+          <span class="swatch-hex">#B8243C</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-vellum);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Vellum</span>
+          <span class="swatch-role">Surface</span>
+          <span class="swatch-hex">#EAE2D3</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="subsection-title" style="margin-top: var(--spacing-10);">Derived</h3>
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-derived-vellum-raised);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Vellum Raised</span>
+          <span class="swatch-role">Cards, panels</span>
+          <span class="swatch-hex">#F2ECE0</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-derived-vellum-sunk);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Vellum Sunk</span>
+          <span class="swatch-role">Inputs, wells</span>
+          <span class="swatch-hex">#DDD3BF</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-derived-wingbase-soft);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Wingbase Soft</span>
+          <span class="swatch-role">Dark raised</span>
+          <span class="swatch-hex">#151925</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-derived-triangle-muted);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Triangle Muted</span>
+          <span class="swatch-role">Disabled</span>
+          <span class="swatch-hex">#4A9FBD</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-derived-underspot-soft);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Underspot Soft</span>
+          <span class="swatch-role">Critical soft</span>
+          <span class="swatch-hex">#D9506A</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-derived-ink);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Ink</span>
+          <span class="swatch-role">Body text</span>
+          <span class="swatch-hex">#1A1F2B</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-derived-ink-muted);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Ink Muted</span>
+          <span class="swatch-role">Secondary text</span>
+          <span class="swatch-hex">#4B5362</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-derived-ink-subtle);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Ink Subtle</span>
+          <span class="swatch-role">Hints, captions</span>
+          <span class="swatch-hex">#7A8192</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-derived-line);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Line</span>
+          <span class="swatch-role">Default border</span>
+          <span class="swatch-hex">#C7BFAE</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-derived-line-subtle);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Line Subtle</span>
+          <span class="swatch-role">Subtle border</span>
+          <span class="swatch-hex">#DDD3BF</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="subsection-title" style="margin-top: var(--spacing-10);">Neutral ramp</h3>
+    <p style="color: var(--color-text-secondary); font-size: var(--type-scale-body-sm-size); max-width: var(--size-max-prose); margin: 0 0 var(--spacing-6);">An 11-stop warm-neutral ramp used by the Flux and Filament adapters to replace Tailwind's zinc. Anchored by Vellum at the light end and ink-near-black at the dark end. Every non-accent surface, border, and muted text in Flux and Filament reads through this ramp.</p>
+
+    <div style="display: flex; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); overflow: hidden; margin-bottom: var(--spacing-6);">
+      <div style="flex: 1; height: 64px; background: var(--palette-neutral-50);"></div>
+      <div style="flex: 1; height: 64px; background: var(--palette-neutral-100);"></div>
+      <div style="flex: 1; height: 64px; background: var(--palette-neutral-200);"></div>
+      <div style="flex: 1; height: 64px; background: var(--palette-neutral-300);"></div>
+      <div style="flex: 1; height: 64px; background: var(--palette-neutral-400);"></div>
+      <div style="flex: 1; height: 64px; background: var(--palette-neutral-500);"></div>
+      <div style="flex: 1; height: 64px; background: var(--palette-neutral-600);"></div>
+      <div style="flex: 1; height: 64px; background: var(--palette-neutral-700);"></div>
+      <div style="flex: 1; height: 64px; background: var(--palette-neutral-800);"></div>
+      <div style="flex: 1; height: 64px; background: var(--palette-neutral-900);"></div>
+      <div style="flex: 1; height: 64px; background: var(--palette-neutral-950);"></div>
+    </div>
+
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-neutral-50);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Neutral 50</span>
+          <span class="swatch-role">Page wash, striping</span>
+          <span class="swatch-hex">#F5EFE3</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-neutral-100);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Neutral 100</span>
+          <span class="swatch-role">Vellum surface</span>
+          <span class="swatch-hex">#EAE2D3</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-neutral-200);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Neutral 200</span>
+          <span class="swatch-role">Subtle borders</span>
+          <span class="swatch-hex">#DDD3BF</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-neutral-300);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Neutral 300</span>
+          <span class="swatch-role">Default borders</span>
+          <span class="swatch-hex">#C7BFAE</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-neutral-400);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Neutral 400</span>
+          <span class="swatch-role">Disabled, placeholders</span>
+          <span class="swatch-hex">#9E968A</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-neutral-500);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Neutral 500</span>
+          <span class="swatch-role">Icons, dividers</span>
+          <span class="swatch-hex">#7A7267</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-neutral-600);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Neutral 600</span>
+          <span class="swatch-role">Tertiary text</span>
+          <span class="swatch-hex">#5A5347</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-neutral-700);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Neutral 700</span>
+          <span class="swatch-role">Secondary text</span>
+          <span class="swatch-hex">#403A2F</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-neutral-800);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Neutral 800</span>
+          <span class="swatch-role">Primary text</span>
+          <span class="swatch-hex">#2B2721</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-neutral-900);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Neutral 900</span>
+          <span class="swatch-role">Strong emphasis</span>
+          <span class="swatch-hex">#1A1815</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background: var(--palette-neutral-950);"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Neutral 950</span>
+          <span class="swatch-role">Maximum contrast</span>
+          <span class="swatch-hex">#0F0E0C</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: var(--spacing-8); padding: var(--spacing-5) var(--spacing-6); background: var(--color-surface-raised); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); display: flex; flex-direction: column; gap: var(--spacing-3);">
+      <p style="margin: 0; font-family: var(--font-display); font-weight: var(--font-weight-medium); color: var(--color-text-primary);">Sanity check: text on neutrals</p>
+      <p style="margin: 0; padding: var(--spacing-3) var(--spacing-4); background: var(--palette-neutral-50); color: var(--palette-neutral-900); border-radius: var(--radius-sm); font-size: var(--type-scale-body-sm-size);">Neutral 900 on Neutral 50 — body text on the lightest surface.</p>
+      <p style="margin: 0; padding: var(--spacing-3) var(--spacing-4); background: var(--palette-neutral-100); color: var(--palette-neutral-800); border-radius: var(--radius-sm); font-size: var(--type-scale-body-sm-size);">Neutral 800 on Neutral 100 — primary text on the Vellum page.</p>
+      <p style="margin: 0; padding: var(--spacing-3) var(--spacing-4); background: var(--palette-neutral-100); color: var(--palette-neutral-600); border-radius: var(--radius-sm); font-size: var(--type-scale-body-sm-size);">Neutral 600 on Neutral 100 — tertiary metadata on Vellum.</p>
+      <p style="margin: 0; padding: var(--spacing-3) var(--spacing-4); background: var(--palette-neutral-900); color: var(--palette-neutral-100); border-radius: var(--radius-sm); font-size: var(--type-scale-body-sm-size);">Neutral 100 on Neutral 900 — inverse surface, for dark sections.</p>
+    </div>
+  </section>
+
+  <!-- 02 · SEMANTIC COLOUR -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-number">02</span>
+      <h2 class="section-title">Semantic roles</h2>
+    </div>
+    <p class="lead">What components actually read. Surfaces, text, borders, interactive states, feedback. A new theme redefines these; the names stay constant.</p>
+
+    <div class="cols-2">
+      <div>
+        <h3 class="subsection-title">Surface</h3>
+        <div class="swatch-grid">
+          <div class="swatch"><div class="swatch-chip" style="background: var(--color-surface-base);"></div><div class="swatch-meta"><span class="swatch-name">base</span><span class="swatch-role">Page background</span></div></div>
+          <div class="swatch"><div class="swatch-chip" style="background: var(--color-surface-raised);"></div><div class="swatch-meta"><span class="swatch-name">raised</span><span class="swatch-role">Cards, modals</span></div></div>
+          <div class="swatch"><div class="swatch-chip" style="background: var(--color-surface-sunk);"></div><div class="swatch-meta"><span class="swatch-name">sunk</span><span class="swatch-role">Input wells</span></div></div>
+          <div class="swatch"><div class="swatch-chip" style="background: var(--color-surface-inverse);"></div><div class="swatch-meta"><span class="swatch-name">inverse</span><span class="swatch-role">Dark sections</span></div></div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="subsection-title">Text</h3>
+        <div style="background: var(--color-surface-raised); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: var(--spacing-5);">
+          <p style="color: var(--color-text-primary); margin: 0 0 var(--spacing-2);">Primary text — for most reading.</p>
+          <p style="color: var(--color-text-secondary); margin: 0 0 var(--spacing-2);">Secondary text — supporting content.</p>
+          <p style="color: var(--color-text-tertiary); margin: 0 0 var(--spacing-2);">Tertiary text — hints, metadata.</p>
+          <p style="margin: 0;"><a href="#" style="color: var(--color-text-link);">Link colour</a> that goes to <span style="color: var(--color-text-link-hover);">link-hover on interaction</span>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cols-2" style="margin-top: var(--spacing-10);">
+      <div>
+        <h3 class="subsection-title">Interactive</h3>
+        <div style="display: flex; gap: var(--spacing-3); flex-wrap: wrap;">
+          <span style="background: var(--color-interactive-primary); color: var(--color-text-on-primary); padding: var(--spacing-3) var(--spacing-5); border-radius: var(--radius-md); font-weight: var(--font-weight-medium);">primary</span>
+          <span style="background: var(--color-interactive-primary-hover); color: var(--color-text-on-primary); padding: var(--spacing-3) var(--spacing-5); border-radius: var(--radius-md); font-weight: var(--font-weight-medium);">primary-hover</span>
+          <span style="background: var(--color-interactive-primary-disabled); color: var(--color-text-on-primary); padding: var(--spacing-3) var(--spacing-5); border-radius: var(--radius-md); font-weight: var(--font-weight-medium);">primary-disabled</span>
+        </div>
+        <div style="display: flex; gap: var(--spacing-3); flex-wrap: wrap; margin-top: var(--spacing-3);">
+          <span style="background: var(--color-interactive-secondary); color: var(--color-text-on-inverse); padding: var(--spacing-3) var(--spacing-5); border-radius: var(--radius-md); font-weight: var(--font-weight-medium);">secondary</span>
+          <span style="background: var(--color-interactive-ghost-hover-bg); color: var(--color-text-primary); padding: var(--spacing-3) var(--spacing-5); border-radius: var(--radius-md); font-weight: var(--font-weight-medium);">ghost-hover</span>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="subsection-title">Feedback</h3>
+        <div style="display: flex; flex-direction: column; gap: var(--spacing-3);">
+          <div style="border-left: 4px solid var(--color-feedback-critical); background: var(--color-surface-raised); padding: var(--spacing-3) var(--spacing-4); border-radius: var(--radius-sm);">
+            <strong style="color: var(--color-feedback-critical);">Critical</strong>
+            <span style="color: var(--color-text-secondary); margin-left: var(--spacing-2);">Errors, destructive actions</span>
+          </div>
+          <div style="border-left: 4px solid var(--color-feedback-warning); background: var(--color-surface-raised); padding: var(--spacing-3) var(--spacing-4); border-radius: var(--radius-sm);">
+            <strong style="color: var(--color-feedback-warning);">Warning</strong>
+            <span style="color: var(--color-text-secondary); margin-left: var(--spacing-2);">Needs attention</span>
+          </div>
+          <div style="border-left: 4px solid var(--color-feedback-success); background: var(--color-surface-raised); padding: var(--spacing-3) var(--spacing-4); border-radius: var(--radius-sm);">
+            <strong style="color: var(--color-feedback-success);">Success</strong>
+            <span style="color: var(--color-text-secondary); margin-left: var(--spacing-2);">Confirmations</span>
+          </div>
+          <div style="border-left: 4px solid var(--color-feedback-info); background: var(--color-surface-raised); padding: var(--spacing-3) var(--spacing-4); border-radius: var(--radius-sm);">
+            <strong style="color: var(--color-feedback-info);">Info</strong>
+            <span style="color: var(--color-text-secondary); margin-left: var(--spacing-2);">Neutral notices</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · TYPOGRAPHY -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-number">03</span>
+      <h2 class="section-title">Typography</h2>
+    </div>
+    <p class="lead">Fraunces for display. Inter Tight for interface. Scale is fluid: every step clamps between a mobile floor and a desktop ceiling. Resize your browser window to watch the type breathe.</p>
+
+    <div class="type-row">
+      <span class="type-label">display</span>
+      <div class="type-specimen" style="font-size: var(--type-scale-display-size); line-height: var(--type-scale-display-line-height); letter-spacing: var(--type-scale-display-letter-spacing); font-weight: var(--type-scale-display-weight);">Chore, done.</div>
+    </div>
+    <div class="type-row">
+      <span class="type-label">heading-1</span>
+      <div class="type-specimen" style="font-size: var(--type-scale-heading-1-size); line-height: var(--type-scale-heading-1-line-height); letter-spacing: var(--type-scale-heading-1-letter-spacing); font-weight: var(--type-scale-heading-1-weight);">Today's appointments</div>
+    </div>
+    <div class="type-row">
+      <span class="type-label">heading-2</span>
+      <div class="type-specimen" style="font-size: var(--type-scale-heading-2-size); line-height: var(--type-scale-heading-2-line-height); letter-spacing: var(--type-scale-heading-2-letter-spacing); font-weight: var(--type-scale-heading-2-weight);">Today's appointments</div>
+    </div>
+    <div class="type-row">
+      <span class="type-label">heading-3</span>
+      <div class="type-specimen" style="font-size: var(--type-scale-heading-3-size); line-height: var(--type-scale-heading-3-line-height); letter-spacing: var(--type-scale-heading-3-letter-spacing); font-weight: var(--type-scale-heading-3-weight);">Today's appointments</div>
+    </div>
+    <div class="type-row">
+      <span class="type-label">heading-4</span>
+      <div class="type-specimen" style="font-size: var(--type-scale-heading-4-size); line-height: var(--type-scale-heading-4-line-height); letter-spacing: var(--type-scale-heading-4-letter-spacing); font-weight: var(--type-scale-heading-4-weight);">Today's appointments</div>
+    </div>
+    <div class="type-row">
+      <span class="type-label">heading-5</span>
+      <div class="type-specimen" style="font-size: var(--type-scale-heading-5-size); line-height: var(--type-scale-heading-5-line-height); letter-spacing: var(--type-scale-heading-5-letter-spacing); font-weight: var(--type-scale-heading-5-weight);">Today's appointments</div>
+    </div>
+    <div class="type-row">
+      <span class="type-label">heading-6</span>
+      <div class="type-specimen ui" style="font-size: var(--type-scale-heading-6-size); line-height: var(--type-scale-heading-6-line-height); letter-spacing: var(--type-scale-heading-6-letter-spacing); font-weight: var(--type-scale-heading-6-weight);">Today's appointments</div>
+    </div>
+    <div class="type-row">
+      <span class="type-label">body-lg</span>
+      <div class="type-specimen ui" style="font-size: var(--type-scale-body-lg-size); line-height: var(--type-scale-body-lg-line-height);">The way a considered interface feels when you work in it for hours: unobtrusive, legible, and quietly generous with whitespace where it matters.</div>
+    </div>
+    <div class="type-row">
+      <span class="type-label">body</span>
+      <div class="type-specimen ui" style="font-size: var(--type-scale-body-size); line-height: var(--type-scale-body-line-height);">The way a considered interface feels when you work in it for hours: unobtrusive, legible, and quietly generous with whitespace where it matters.</div>
+    </div>
+    <div class="type-row">
+      <span class="type-label">body-sm</span>
+      <div class="type-specimen ui" style="font-size: var(--type-scale-body-sm-size); line-height: var(--type-scale-body-sm-line-height);">The way a considered interface feels when you work in it for hours: unobtrusive, legible, and quietly generous with whitespace where it matters.</div>
+    </div>
+    <div class="type-row">
+      <span class="type-label">caption</span>
+      <div class="type-specimen ui" style="font-size: var(--type-scale-caption-size); line-height: var(--type-scale-caption-line-height); letter-spacing: var(--type-scale-caption-letter-spacing); color: var(--color-text-tertiary); text-transform: uppercase;">Last updated 3 minutes ago</div>
+    </div>
+  </section>
+
+  <!-- 04 · SPACING -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-number">04</span>
+      <h2 class="section-title">Spacing</h2>
+    </div>
+    <p class="lead">8px base with a 4px half-step. Fixed scale for component internals. Fluid scale for section-level rhythm.</p>
+
+    <div class="cols-2">
+      <div>
+        <h3 class="subsection-title">Scale</h3>
+        <div class="spacing-grid">
+          <div class="spacing-row"><span class="spacing-label">0.5 · 2px</span><div class="spacing-bar" style="width: var(--spacing-0-5);"></div></div>
+          <div class="spacing-row"><span class="spacing-label">1 · 4px</span><div class="spacing-bar" style="width: var(--spacing-1);"></div></div>
+          <div class="spacing-row"><span class="spacing-label">1.5 · 6px</span><div class="spacing-bar" style="width: var(--spacing-1-5);"></div></div>
+          <div class="spacing-row"><span class="spacing-label">2 · 8px</span><div class="spacing-bar" style="width: var(--spacing-2);"></div></div>
+          <div class="spacing-row"><span class="spacing-label">3 · 12px</span><div class="spacing-bar" style="width: var(--spacing-3);"></div></div>
+          <div class="spacing-row"><span class="spacing-label">4 · 16px</span><div class="spacing-bar" style="width: var(--spacing-4);"></div></div>
+          <div class="spacing-row"><span class="spacing-label">5 · 20px</span><div class="spacing-bar" style="width: var(--spacing-5);"></div></div>
+          <div class="spacing-row"><span class="spacing-label">6 · 24px</span><div class="spacing-bar" style="width: var(--spacing-6);"></div></div>
+          <div class="spacing-row"><span class="spacing-label">8 · 32px</span><div class="spacing-bar" style="width: var(--spacing-8);"></div></div>
+          <div class="spacing-row"><span class="spacing-label">10 · 40px</span><div class="spacing-bar" style="width: var(--spacing-10);"></div></div>
+          <div class="spacing-row"><span class="spacing-label">12 · 48px</span><div class="spacing-bar" style="width: var(--spacing-12);"></div></div>
+          <div class="spacing-row"><span class="spacing-label">16 · 64px</span><div class="spacing-bar" style="width: var(--spacing-16);"></div></div>
+          <div class="spacing-row"><span class="spacing-label">20 · 80px</span><div class="spacing-bar" style="width: var(--spacing-20);"></div></div>
+          <div class="spacing-row"><span class="spacing-label">24 · 96px</span><div class="spacing-bar" style="width: var(--spacing-24);"></div></div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="subsection-title">Fluid section spacing</h3>
+        <p style="color: var(--color-text-secondary); font-size: var(--type-scale-body-sm-size);">These grow and shrink with viewport width. Resize your browser to see them respond.</p>
+        <div style="display: flex; flex-direction: column; gap: var(--spacing-4); margin-top: var(--spacing-4);">
+          <div style="background: var(--color-surface-raised); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: var(--spacing-section-sm) var(--spacing-5);">
+            <span class="spacing-label">section-sm</span>
+          </div>
+          <div style="background: var(--color-surface-raised); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: var(--spacing-section) var(--spacing-5);">
+            <span class="spacing-label">section</span>
+          </div>
+          <div style="background: var(--color-surface-raised); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: var(--spacing-section-lg) var(--spacing-5);">
+            <span class="spacing-label">section-lg</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · RADIUS -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-number">05</span>
+      <h2 class="section-title">Radius</h2>
+    </div>
+    <p class="lead">Restrained. The triangle motif and editorial tone favour crisp corners over soft ones.</p>
+
+    <div class="radius-grid">
+      <div class="radius-specimen" style="border-radius: var(--radius-none);"><span class="radius-specimen-label">none · 0</span></div>
+      <div class="radius-specimen" style="border-radius: var(--radius-sm);"><span class="radius-specimen-label">sm · 2px</span></div>
+      <div class="radius-specimen" style="border-radius: var(--radius-md);"><span class="radius-specimen-label">md · 4px</span></div>
+      <div class="radius-specimen" style="border-radius: var(--radius-lg);"><span class="radius-specimen-label">lg · 8px</span></div>
+      <div class="radius-specimen" style="border-radius: var(--radius-xl);"><span class="radius-specimen-label">xl · 12px</span></div>
+      <div class="radius-specimen" style="border-radius: var(--radius-pill); aspect-ratio: auto; height: 60px; align-items: center;"><span class="radius-specimen-label">pill</span></div>
+    </div>
+  </section>
+
+  <!-- 06 · SHADOW -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-number">06</span>
+      <h2 class="section-title">Shadow</h2>
+    </div>
+    <p class="lead">Used sparingly. Depth usually comes from surface colour and border, not from shadow.</p>
+
+    <div class="shadow-grid">
+      <div class="shadow-specimen shadow-sm"><span class="radius-specimen-label">sm</span></div>
+      <div class="shadow-specimen shadow-md"><span class="radius-specimen-label">md</span></div>
+      <div class="shadow-specimen shadow-lg"><span class="radius-specimen-label">lg</span></div>
+    </div>
+  </section>
+
+  <!-- 07 · MOTIF -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-number">07</span>
+      <h2 class="section-title">The motif</h2>
+    </div>
+    <p class="lead">The triangle band. Scaled, rotated, broken. Here rendered from the tokens themselves so it travels with the system.</p>
+
+    <div class="motif-strip">
+      <div class="triangle" style="border-left-width: 10px; border-right-width: 10px; border-bottom-width: 18px; border-bottom-color: var(--palette-triangle);"></div>
+      <div class="triangle" style="border-left-width: 16px; border-right-width: 16px; border-bottom-width: 28px; border-bottom-color: var(--palette-iridescent);"></div>
+      <div class="triangle" style="border-left-width: 22px; border-right-width: 22px; border-bottom-width: 40px; border-bottom-color: var(--palette-triangle);"></div>
+      <div class="triangle" style="border-left-width: 6px; border-right-width: 6px; border-bottom-width: 10px; border-bottom-color: var(--palette-iridescent);"></div>
+      <div class="triangle" style="border-left-width: 28px; border-right-width: 28px; border-bottom-width: 50px; border-bottom-color: var(--palette-triangle);"></div>
+      <div class="triangle" style="border-left-width: 4px; border-right-width: 4px; border-bottom-width: 7px; border-bottom-color: var(--palette-underspot);"></div>
+      <div class="triangle" style="border-left-width: 20px; border-right-width: 20px; border-bottom-width: 36px; border-bottom-color: var(--palette-triangle);"></div>
+      <div class="triangle" style="border-left-width: 14px; border-right-width: 14px; border-bottom-width: 24px; border-bottom-color: var(--palette-iridescent);"></div>
+      <div class="triangle" style="border-left-width: 10px; border-right-width: 10px; border-bottom-width: 18px; border-bottom-color: var(--palette-triangle);"></div>
+      <div class="triangle" style="border-left-width: 18px; border-right-width: 18px; border-bottom-width: 32px; border-bottom-color: var(--palette-iridescent);"></div>
+      <div class="triangle" style="border-left-width: 8px; border-right-width: 8px; border-bottom-width: 14px; border-bottom-color: var(--palette-triangle);"></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>choredon · Design System</span>
+    <span>Confidential · Scanlon Hair</span>
+    <span>v0.1.0 · April 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+    "name": "choredon/ui",
+    "description": "Choredon design system: tokens, components, and Filament theme.",
+    "type": "library",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Choredon\\Ui\\": "src/"
+        }
+    },
+    "bin": [
+        "bin/choredon-compile"
+    ],
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

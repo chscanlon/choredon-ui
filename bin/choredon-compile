@@ -1,0 +1,87 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+// Support both Composer-installed and standalone usage.
+$autoloadPaths = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../../autoload.php',
+];
+
+$autoloaded = false;
+foreach ($autoloadPaths as $path) {
+    if (file_exists($path)) {
+        require $path;
+        $autoloaded = true;
+        break;
+    }
+}
+
+if (! $autoloaded) {
+    // Fallback: manual require for dev without Composer install.
+    require __DIR__ . '/../src/TokenCompiler.php';
+}
+
+use Choredon\Ui\TokenCompiler;
+
+$options = getopt('', ['theme:', 'out:', 'help']);
+
+if (isset($options['help'])) {
+    echo <<<TXT
+Usage: choredon-compile --theme=<path-to-tokens.json> [--out=<dir>]
+
+Compiles a theme's tokens.json into CSS custom properties and a Tailwind preset.
+
+Options:
+  --theme   Path to theme JSON file (default: themes/choredon.json)
+  --out     Output directory (default: dist/)
+  --help    Show this message.
+
+TXT;
+    exit(0);
+}
+
+$packageRoot = dirname(__DIR__);
+$themePath = $options['theme'] ?? "{$packageRoot}/themes/choredon.json";
+$outDir    = rtrim($options['out'] ?? "{$packageRoot}/dist", '/');
+
+if (! is_readable($themePath)) {
+    fwrite(STDERR, "Cannot read theme file: {$themePath}\n");
+    exit(1);
+}
+
+if (! is_dir($outDir)) {
+    if (! mkdir($outDir, 0755, true) && ! is_dir($outDir)) {
+        fwrite(STDERR, "Cannot create output directory: {$outDir}\n");
+        exit(1);
+    }
+}
+
+try {
+    $compiler = TokenCompiler::fromFile($themePath);
+
+    $themeName = basename($themePath, '.json');
+
+    // CSS: emit under both :root and [data-theme="{name}"] so themes can
+    // coexist on one page for the reference app's theme toggle.
+    $css = "/* Theme: {$themeName} */\n\n"
+         . $compiler->toCss(':root')
+         . "\n"
+         . $compiler->toCss("[data-theme=\"{$themeName}\"]");
+
+    $cssPath = "{$outDir}/{$themeName}.css";
+    file_put_contents($cssPath, $css);
+    echo "Wrote {$cssPath}\n";
+
+    // Tailwind preset is theme-agnostic (references CSS vars), so one file
+    // serves all themes. We still write it under the theme name for now and
+    // consumers can rename/symlink as they prefer.
+    $presetPath = "{$outDir}/tailwind-preset.js";
+    file_put_contents($presetPath, $compiler->toTailwindPreset());
+    echo "Wrote {$presetPath}\n";
+
+} catch (\Throwable $e) {
+    fwrite(STDERR, "Compilation failed: " . $e->getMessage() . "\n");
+    exit(1);
+}
