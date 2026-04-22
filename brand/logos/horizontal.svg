@@ -1,20 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 72" role="img" aria-label="Choredon">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 64" role="img" aria-label="Choredon">
   <title>Choredon</title>
-  <desc>A horizontal lockup: triangle band on the left, Choredon wordmark in Fraunces on the right.</desc>
+  <desc>A horizontal lockup: triangle band on the left, Choredon wordmark in Fraunces on the right, bottom-aligned on a shared baseline.</desc>
 
-  <!-- Triangle band - varied heights and widths, on an invisible baseline at y=56 -->
   <g>
-    <polygon points="6,56 12,56 9,44" fill="#1E8FB8"/>
-    <polygon points="14,56 24,56 19,36" fill="#3DB5DC"/>
-    <polygon points="26,56 40,56 33,24" fill="#1E8FB8"/>
-    <polygon points="42,56 50,56 46,40" fill="#3DB5DC"/>
-    <polygon points="52,56 58,56 55,48" fill="#1E8FB8"/>
-    <polygon points="60,56 64,56 62,52" fill="#B8243C"/>
-    <polygon points="66,56 76,56 71,36" fill="#1E8FB8"/>
+    <polygon points="6,54 12,54 9,42" fill="#1E8FB8"/>
+    <polygon points="14,54 24,54 19,34" fill="#3DB5DC"/>
+    <polygon points="26,54 40,54 33,22" fill="#1E8FB8"/>
+    <polygon points="42,54 50,54 46,38" fill="#3DB5DC"/>
+    <polygon points="52,54 58,54 55,46" fill="#1E8FB8"/>
+    <polygon points="60,54 64,54 62,50" fill="#B8243C"/>
+    <polygon points="66,54 76,54 71,34" fill="#1E8FB8"/>
   </g>
 
-  <!-- Wordmark -->
-  <text x="96" y="50"
+  <text x="92" y="54"
         font-family="'Fraunces', ui-serif, Georgia, serif"
         font-size="44"
         font-weight="400"
