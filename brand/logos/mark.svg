@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Choredon monogram">
+  <title>Choredon</title>
+  <desc>A cerulean triangle within a circle, the Choredon monogram mark.</desc>
+  <circle cx="64" cy="64" r="56" fill="none" stroke="#1E8FB8" stroke-width="3"/>
+  <polygon points="64,28 94,84 34,84" fill="#1E8FB8"/>
+</svg>

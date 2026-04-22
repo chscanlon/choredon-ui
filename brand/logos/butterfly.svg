@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Graphium choredon, the Blue Triangle butterfly">
+  <title>Graphium choredon</title>
+  <desc>A stylised Blue Triangle butterfly. Forewings with horizontal leading edges and blunt rounded tips. Narrower hindwings angled gently downward with generous rounded outer curves. Inverted cerulean triangle markings in a subtle size gradient, closely spaced near the body, clear of the thorax. Two small inverted Underspot-red accents. Structural lines use currentColor so the graphic adapts to the parent's text colour: set color to Vellum for Wingbase surfaces (the primary treatment), or to Ink for Vellum surfaces.</desc>
+
+  <g stroke="currentColor" stroke-width="1.25" fill="none" stroke-linecap="round" stroke-linejoin="round">
+
+    <path d="
+      M 160 68
+      L 68 68
+      Q 48 68 46 92
+      Q 48 116 68 114
+      L 160 108
+      Z
+    "/>
+    <path d="
+      M 160 68
+      L 252 68
+      Q 272 68 274 92
+      Q 272 116 252 114
+      L 160 108
+      Z
+    "/>
+
+    <path d="
+      M 160 108
+      L 116 112
+      Q 90 114 80 128
+      Q 68 148 84 158
+      Q 108 164 140 154
+      L 160 148
+      Z
+    "/>
+    <path d="
+      M 160 108
+      L 204 112
+      Q 230 114 240 128
+      Q 252 148 236 158
+      Q 212 164 180 154
+      L 160 148
+      Z
+    "/>
+
+  </g>
+
+  <path d="
+    M 160 64
+    Q 166 70 166 108
+    Q 166 138 162 152
+    L 160 160
+    L 158 152
+    Q 154 138 154 108
+    Q 154 70 160 64
+    Z
+  " fill="currentColor"/>
+
+  <circle cx="160" cy="60" r="5" fill="currentColor"/>
+
+  <g stroke="currentColor" stroke-width="1.25" fill="none" stroke-linecap="round">
+    <path d="M 158 56 Q 146 42 140 28"/>
+    <path d="M 162 56 Q 174 42 180 28"/>
+  </g>
+
+  <circle cx="140" cy="28" r="2" fill="none" stroke="currentColor" stroke-width="1.25"/>
+  <circle cx="180" cy="28" r="2" fill="none" stroke="currentColor" stroke-width="1.25"/>
+
+  <g fill="#1E8FB8">
+    <polygon points="128,78 152,78 140,104"/>
+    <polygon points="99,80 121,80 110,103"/>
+    <polygon points="72,82 92,82 82,103"/>
+  </g>
+
+  <g fill="#1E8FB8">
+    <polygon points="168,78 192,78 180,104"/>
+    <polygon points="199,80 221,80 210,103"/>
+    <polygon points="228,82 248,82 238,103"/>
+  </g>
+
+  <g fill="#1E8FB8">
+    <polygon points="128,114 150,114 139,140"/>
+    <polygon points="104,116 124,116 114,138"/>
+  </g>
+
+  <g fill="#1E8FB8">
+    <polygon points="170,114 192,114 181,140"/>
+    <polygon points="196,116 216,116 206,138"/>
+  </g>
+
+  <g fill="#B8243C">
+    <polygon points="124,146 132,146 128,138"/>
+    <polygon points="188,146 196,146 192,138"/>
+  </g>
+
+</svg>
