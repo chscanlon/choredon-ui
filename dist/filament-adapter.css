@@ -1,124 +1,394 @@
 /*
- * Choredon → Filament adapter.
+ * Choredon → Filament adapter (v0.2)
  *
- * Usage in smart-salon:
+ * Targets Filament v4 and v5 on Tailwind v4.
+ * Tested against Filament v5.3 / Tailwind v4.2 (smart-salon).
  *
- *   1. Generate a custom Filament theme for your panel:
- *        php artisan make:filament-theme admin
+ * v0.1 was written for Filament v3 on Tailwind v3. That adapter is kept at
+ * filament-adapter.css.v01-backup in the package for reference; do not import it.
  *
- *      (Replace 'admin' with the panel name.)
+ * ─── Install ────────────────────────────────────────────────────────────
  *
- *   2. In resources/css/filament/admin/theme.css, AFTER Filament's own imports:
- *        @import 'tailwindcss';
- *        @import '../../../../vendor/filament/filament/resources/css/theme.css';
- *        @import '../../../../vendor/choredon/ui/dist/choredon.css';
- *        @import '../../../../vendor/choredon/ui/dist/filament-adapter.css';
+ * 1. Generate a custom Filament theme for your panel if you don't have one:
+ *      php artisan make:filament-theme admin
  *
- *   3. In your Panel Provider, register Choredon's colour roles:
- *        use Choredon\Ui\Filament\ChoredonColors;
- *        $panel->colors(ChoredonColors::forPanel())
- *              ->viteTheme('resources/css/filament/admin/theme.css');
+ *    In Filament v4/v5 on Tailwind v4 this creates only a theme.css; no
+ *    tailwind.config.js is generated (Tailwind v4 is CSS-first).
  *
- * Colour roles are handled by ChoredonColors::forPanel() in PHP.
- * This file handles everything colour roles don't cover: typography,
- * page/surface backgrounds, sidebar treatment, and targeted component tweaks.
+ * 2. In resources/css/filament/{panel}/theme.css, after Filament's imports,
+ *    import Choredon's tokens and this adapter:
+ *
+ *      @import '../../../../vendor/filament/filament/resources/css/theme.css';
+ *
+ *      @source '../../../../app/Filament/**\/*';
+ *      @source '../../../../resources/views/filament/**\/*';
+ *
+ *      @import '../../../../vendor/choredon/ui/dist/choredon.css';
+ *      @import '../../../../vendor/choredon/ui/dist/filament-adapter.css';
+ *
+ * 3. In your Panel Provider, register Choredon's colour roles:
+ *
+ *      use Choredon\Ui\Filament\ChoredonColors;
+ *
+ *      public function panel(Panel $panel): Panel
+ *      {
+ *          return $panel
+ *              ->viteTheme('resources/css/filament/admin/theme.css')
+ *              ->colors(ChoredonColors::forPanel())
+ *              // ... other configuration
+ *              ;
+ *      }
+ *
+ *    The ChoredonColors::forPanel() helper returns an array that remaps
+ *    Filament's six colour roles onto Choredon's palette. Most of the
+ *    panel's visual language (buttons, links, badges, alerts) then theme
+ *    themselves from those roles. This CSS file handles the remaining
+ *    cases — surfaces, typography, form inputs, button contrast — that
+ *    colour roles alone don't reach.
+ *
+ * ─── Notes on Filament v4/v5 behaviour ─────────────────────────────────
+ *
+ * - Filament v4 introduced automatic button text colouring based on
+ *   accessibility contrast. Triangle blue (#1E8FB8) is medium-dark and
+ *   the auto-contrast picker generally chooses white — but this file
+ *   forces it explicitly for consistency against dark-mode edge cases
+ *   and for any future palette tweak where the auto-picker might flip.
+ *
+ * - The `.fi-*` class hook convention persists across v3/v4/v5. Individual
+ *   hook names are stable for primary structural components (.fi-body,
+ *   .fi-sidebar, .fi-topbar, .fi-section) but rarer deeper hooks may have
+ *   shifted. If a rule below produces no visible effect, inspect the
+ *   element in DevTools and either adjust the selector or file an issue
+ *   against choredon-ui.
+ *
+ * - Choredon v0.1 ships no dark theme. This adapter does not add dark-mode
+ *   behaviour; any dark-related rules in Filament's default theme will
+ *   remain visually inert on Choredon colours until v0.2 of the design
+ *   system ships a dark palette.
  */
 
+/* ─── Typography ────────────────────────────────────────────────────────
+ *
+ * Filament defaults to Inter for all text. Choredon uses Fraunces for
+ * display moments (headings, page titles) and Inter Tight for UI text.
+ * Pushing these into Filament's @theme scope makes them the default for
+ * any rule that uses --font-sans or --font-serif inside the admin panel.
+ */
 @theme {
-  /* Typography. Filament defaults to Inter; we set display + ui fonts from Choredon. */
   --font-sans:  var(--font-ui);
   --font-serif: var(--font-display);
-
-  /* Radii. Align Filament's rounded utilities with Choredon's restrained radius scale. */
-  --radius-xs: var(--radius-none);
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-xl: var(--radius-xl);
 }
 
-/*
- * Page background.
+/* ─── Headings ──────────────────────────────────────────────────────────
  *
- * Filament's default is gray-50 (which, via the colour role mapping, now means
- * Choredon's neutral-50 — a pale Vellum variant). That's already in the right
- * tonal family. We don't need to override it.
+ * Filament uses one sans font for everything, including page titles and
+ * section titles. Choredon's editorial warmth comes partly from using
+ * Fraunces for these display moments — but only for clear headings, not
+ * for labels that happen to use heading font-size utilities.
+ */
+.fi-header-heading,
+.fi-section-header-heading,
+.fi-modal-heading,
+.fi-fo-section-header-heading {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.005em;
+}
+
+/* Page titles get a slightly stronger letter-spacing to match Choredon's
+ * heading-1 treatment. */
+.fi-page .fi-header-heading {
+  letter-spacing: -0.01em;
+}
+
+/* ─── Page and surface backgrounds ─────────────────────────────────────
  *
- * However, for stylist-facing admin pages we want a slightly warmer surface
- * to differentiate admin from the customer surface. Using neutral-100 (Vellum)
- * as the page background makes Filament feel like it belongs to Choredon
- * rather than sitting on a generic pale surface.
+ * Filament's default is a neutral white/gray-50 page with white cards.
+ * Choredon uses Vellum (the warm cream) as its base surface and a slightly
+ * raised Vellum for cards. Applying these to the top-level layout is the
+ * single largest visible brand change in the admin panel.
  */
 .fi-body {
   background-color: var(--color-surface-base);
+  color: var(--color-text-primary);
 }
 
-/*
- * Sidebar. Filament's sidebar defaults to white. Against a Vellum page,
- * a slightly raised Vellum reads as coherent rather than isolated.
+.fi-main {
+  background-color: var(--color-surface-base);
+}
+
+/* ─── Sidebar ──────────────────────────────────────────────────────────
+ *
+ * Filament's sidebar defaults to white with a subtle border. Against Vellum,
+ * use raised Vellum (F2ECE0) so the sidebar reads as a coherent slightly-
+ * elevated panel rather than a separate white slab.
  */
 .fi-sidebar {
   background-color: var(--color-surface-raised);
   border-right: 1px solid var(--color-border-subtle);
 }
 
-/*
- * Topbar. Same treatment as sidebar for visual continuity.
+.fi-sidebar-nav {
+  background-color: transparent;
+}
+
+.fi-sidebar-group-label {
+  color: var(--color-text-tertiary);
+  font-family: var(--font-ui);
+  font-size: var(--type-scale-caption-size);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: var(--font-weight-medium);
+}
+
+.fi-sidebar-item-label {
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+}
+
+/* Active sidebar item uses Triangle blue as the indicator.
+ * ChoredonColors::forPanel() already registers primary = Triangle, so
+ * Filament's default active treatment (primary-600 background/text) will
+ * use Choredon colours automatically. No further CSS needed here unless
+ * the treatment looks wrong in practice. */
+
+/* ─── Topbar ───────────────────────────────────────────────────────────
  */
 .fi-topbar {
   background-color: var(--color-surface-raised);
   border-bottom: 1px solid var(--color-border-subtle);
 }
 
-/*
- * Section surfaces (resource tables, form sections, modals). Filament uses
- * white by default. Lift them slightly above the Vellum page with the
- * raised surface tone so cards have visual hierarchy.
+.fi-topbar .fi-breadcrumbs-item {
+  color: var(--color-text-secondary);
+}
+
+.fi-topbar .fi-breadcrumbs-item:last-child {
+  color: var(--color-text-primary);
+}
+
+/* ─── Sections, modals, dropdowns ──────────────────────────────────────
+ *
+ * Anything Filament treats as a raised surface (resource forms, section
+ * cards, modal windows, dropdown panels) gets the raised Vellum tone.
  */
 .fi-section,
+.fi-fo-section,
 .fi-modal-window,
-.fi-dropdown-panel {
+.fi-dropdown-panel,
+.fi-dropdown-list,
+.fi-menu {
   background-color: var(--color-surface-raised);
   border-color: var(--color-border-subtle);
 }
 
-/*
- * Table row striping. Filament alternates white / gray-50 by default.
- * With the colour role mapping applied, gray-50 is already Choredon's
- * neutral-50, which pairs with surface-raised cleanly. No override needed,
- * but left as a placeholder for future refinements.
- */
+.fi-section-header,
+.fi-fo-section-header {
+  border-bottom-color: var(--color-border-subtle);
+}
 
-/*
- * Input wells. Filament form inputs default to white. Using the sunk surface
- * tone gives them the "pressed into the page" feel that matches Choredon's
- * restrained aesthetic.
+/* ─── Tables ───────────────────────────────────────────────────────────
+ *
+ * Filament tables sit inside .fi-ta-ctn / .fi-ta-table. Let them inherit
+ * the raised surface, but ensure zebra striping and borders use Choredon
+ * subtle tones rather than the default zinc.
+ */
+.fi-ta-ctn {
+  background-color: var(--color-surface-raised);
+  border-color: var(--color-border-subtle);
+}
+
+.fi-ta-header-cell {
+  color: var(--color-text-secondary);
+  font-family: var(--font-ui);
+  font-weight: var(--font-weight-medium);
+  background-color: var(--color-surface-raised);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.fi-ta-cell {
+  color: var(--color-text-primary);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+/* Zebra striping — subtle, using the base tone for alternating rows.
+ * This rule matches even rows in the table body; Filament's default uses
+ * gray-50, so we're just retargeting the tint. */
+.fi-ta-row:nth-child(odd) {
+  background-color: transparent;
+}
+
+.fi-ta-row:nth-child(even) {
+  background-color: var(--color-surface-base);
+}
+
+/* ─── Form inputs ──────────────────────────────────────────────────────
+ *
+ * Match the Flux adapter treatment: sunk Vellum for input backgrounds
+ * so they read as "pressed into" the page rather than floating on top.
  */
 .fi-input,
 .fi-select-input,
-.fi-textarea {
+.fi-textarea,
+.fi-fo-text-input,
+.fi-fo-textarea-input,
+.fi-fo-select-input {
   background-color: var(--color-surface-sunk);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-default);
 }
 
-/*
- * Heading treatment. Filament uses Inter for everything including page titles.
- * Choredon reserves the display serif (Fraunces) for headings, which gives
- * admin pages an editorial warmth that matches the brand principle
- * ("Would someone who makes beautiful things feel at home here?").
+.fi-input::placeholder,
+.fi-textarea::placeholder,
+.fi-fo-text-input::placeholder,
+.fi-fo-textarea-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+/* Focus rings use Choredon's focus ring colour (Triangle). Filament's
+ * default uses primary-600 which — since primary is remapped to Triangle —
+ * should already produce the correct ring. This explicit rule is a
+ * safety net for any input that uses a different default. */
+.fi-input:focus,
+.fi-select-input:focus,
+.fi-textarea:focus,
+.fi-fo-text-input:focus,
+.fi-fo-textarea-input:focus {
+  border-color: var(--color-focus-ring);
+  box-shadow: 0 0 0 3px rgb(from var(--color-focus-ring) r g b / 0.2);
+}
+
+/* Labels — keep Filament's default weight but switch to Inter Tight
+ * explicitly so the admin doesn't accidentally show system-ui on a
+ * machine without Inter loaded. */
+.fi-fo-field-wrp-label {
+  font-family: var(--font-ui);
+  color: var(--color-text-primary);
+}
+
+/* ─── Primary buttons ──────────────────────────────────────────────────
+ *
+ * Filament v4/v5's automatic contrast calculator picks text colour based
+ * on the button's background. For Triangle blue it should pick white,
+ * which is what we want — but this explicit rule guards against edge
+ * cases where the picker might choose a darker text colour, especially
+ * for hover states or if the Triangle hex is ever tuned lighter.
+ *
+ * This selector pattern comes from the community fix circulating in
+ * Filament discussions for the automatic-contrast edge case.
  */
-.fi-header-heading,
-.fi-section-header-heading,
-.fi-modal-heading {
-  font-family: var(--font-display);
+.fi-btn.fi-color-primary {
+  background-color: var(--color-interactive-primary);
+  color: var(--color-text-on-primary);
+}
+
+.fi-btn.fi-color-primary:hover {
+  background-color: var(--color-interactive-primary-hover);
+  color: var(--color-text-on-primary);
+}
+
+.fi-btn.fi-color-primary:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Danger buttons — use Underspot explicitly, with pale Vellum text for
+ * consistent legibility. */
+.fi-btn.fi-color-danger {
+  background-color: var(--color-feedback-critical);
+  color: var(--color-text-on-primary);
+}
+
+.fi-btn.fi-color-danger:hover {
+  background-color: var(--color-feedback-critical-soft);
+  color: var(--color-text-on-primary);
+}
+
+/* Outlined/link-style buttons keep Filament's default treatment — they
+ * theme themselves from the primary colour which is already Triangle. */
+
+/* ─── Badges ───────────────────────────────────────────────────────────
+ *
+ * Filament's default badge treatment pulls from colour roles and is
+ * generally fine. Small tweaks for typography consistency.
+ */
+.fi-badge {
+  font-family: var(--font-ui);
   font-weight: var(--font-weight-medium);
-  letter-spacing: -0.005em;
+  letter-spacing: 0.01em;
 }
 
-/*
- * Page-level page headings get slightly more weight in the letter-spacing
- * department to match Choredon's heading-1/2 treatment.
+/* ─── Border radius ────────────────────────────────────────────────────
+ *
+ * Align Filament's radii with Choredon's crisp scale. Filament by default
+ * uses rounded-lg / rounded-xl heavily (8px/12px). Choredon prefers 4px
+ * as the default — more precise, less "soft SaaS" — with larger radii
+ * reserved for specific elements.
+ *
+ * We override via @theme so Filament's Tailwind utilities pick up the
+ * new values automatically.
  */
-.fi-page .fi-header-heading {
-  font-family: var(--font-display);
-  letter-spacing: -0.01em;
+@theme {
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 12px;
+  --radius-3xl: 16px;
 }
+
+/* ─── Notifications (toasts) ───────────────────────────────────────────
+ *
+ * Filament's notification system (bottom-right toasts) uses semantic
+ * colours already remapped by ChoredonColors::forPanel(). Minor tweaks
+ * for surface tone and typography.
+ */
+.fi-no-notification {
+  background-color: var(--color-surface-raised);
+  border-color: var(--color-border-subtle);
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+}
+
+/* ─── Login page ───────────────────────────────────────────────────────
+ *
+ * If Filament's admin login is in use (->login() in the panel provider),
+ * give it the same Vellum treatment as the rest of the panel. smart-salon
+ * uses this.
+ */
+.fi-simple-layout,
+.fi-simple-main {
+  background-color: var(--color-surface-base);
+}
+
+.fi-simple-page {
+  background-color: var(--color-surface-raised);
+  border-color: var(--color-border-subtle);
+}
+
+/* ─── Links ────────────────────────────────────────────────────────────
+ *
+ * Inline text links in rich content, descriptions, etc. use the Deep
+ * token rather than Triangle so link colour is visibly different from
+ * primary-button colour.
+ */
+.fi-link,
+.fi-prose a {
+  color: var(--color-text-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.fi-link:hover,
+.fi-prose a:hover {
+  color: var(--color-text-link-hover);
+}
+
+/* ─── End of adapter ───────────────────────────────────────────────────
+ *
+ * Any Filament-specific rule not covered above should theme itself from
+ * the colour roles registered via ChoredonColors::forPanel(). If you
+ * find a Filament component that doesn't theme correctly, inspect the
+ * element, identify the .fi-* hook class, and either add a rule here
+ * or file an issue against choredon-ui.
+ */

@@ -1,5 +1,29 @@
 # Choredon UI Changelog
 
+## v0.2.0 — Filament adapter rewrite for v4/v5
+
+Scoped update to prepare for installing Choredon into smart-salon (Filament v5.3 on Tailwind v4). The v0.1 Filament adapter was written for Filament v3 on Tailwind v3 and would not apply correctly to a v4/v5 panel.
+
+### Changed
+
+- **Filament adapter rewritten for v4/v5 on Tailwind v4.** New `dist/filament-adapter.css` targets current Filament class hooks and uses Tailwind v4 CSS-first configuration (`@theme` blocks instead of tailwind.config.js). The v0.1 adapter is preserved alongside as `filament-adapter.css.v01-backup` for reference; do not import it.
+- **Primary button text colour made explicit.** Filament v4 introduced automatic contrast-based text colouring that can produce dark text on medium-dark backgrounds. The adapter now forces `--color-text-on-primary` (pale Vellum) on `.fi-btn.fi-color-primary` regardless of the contrast picker.
+- **Border radius tokens aligned with Choredon's crisp scale.** Filament's Tailwind radii now read from Choredon's 2/4/6/8/12/16px scale via `@theme`, replacing Filament's softer defaults.
+- **Table treatment specified.** Explicit rules for `.fi-ta-*` hooks to ensure Vellum surface and warm-neutral dividers rather than the default white/zinc.
+- **Form input selectors broadened.** Added `.fi-fo-text-input`, `.fi-fo-textarea-input`, `.fi-fo-select-input` alongside the existing `.fi-input` selectors. Filament v4+ uses the more-specific hooks in several form field types.
+
+### Unchanged
+
+- `ChoredonColors::forPanel()` PHP helper — the `->colors([...])` panel API is stable across v3/v4/v5.
+- Flux adapter — already Tailwind-v4-compatible (salon-central has been running v0.1.1 against Tailwind v4.0.7 since April without issues).
+- Tokens, palette, semantic layer — all stable.
+
+### Known limitations (carried over)
+
+- No dark theme. Still deferred to v0.3.
+- Third-party Filament plugins' own views (in smart-salon's case `achyutn/filament-log-viewer` and `croustibat/filament-jobs-monitor`) may not honour the theme. Budget visual-QA time when those plugins are in use.
+- Some Filament component hook classes have not been verified against the live v5.3 markup — the adapter uses well-documented hooks but rarer ones may need tweaking during install.
+
 ## v0.1.1 — Flux adapter refinement
 
 First adapter iteration based on the v0.1.0 install into salon-central.
