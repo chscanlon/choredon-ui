@@ -10,9 +10,14 @@ This package is the single source of truth for Choredon's visual language. It sh
 
 ## Status
 
-v0.1.0 — tokens + Flux and Filament adapters. No hand-rolled Blade components yet.
+v0.2.0 — tokens + Flux adapter + Filament adapter (rewritten for v4/v5) + first Blade components.
 
-Choredon uses Flux for application-surface components (buttons, inputs, modals, dropdowns, tables, etc.) and Filament for admin. Hand-rolled Blade components are added only for domain-specific composites (e.g., appointment cards, stylist rosters) that Flux doesn't provide.
+Choredon uses Flux for application-surface primitives (buttons, inputs, modals, dropdowns, tables, etc.) and Filament for admin. The package's Blade-components layer covers **composites** — things built *on top of* Flux that are worth centralising. Two categories:
+
+1. **Salon-domain composites** that Flux doesn't provide — e.g. `appointment-card`, `stylist-roster`, `service-pill` (planned).
+2. **Generic app-UI composites** that wrap multiple Flux primitives with shared behavior — e.g. `date-nav` (shipped in this release).
+
+When in doubt, prefer using Flux directly over reaching for a Choredon component. Composites earn their place by being (a) used across more than one page or more than one consuming app, and (b) non-trivial enough that re-implementing them would produce inconsistency.
 
 ## Package structure
 
@@ -23,9 +28,19 @@ choredon-ui/
 ├── themes/
 │   └── choredon.json            Source of truth for the default theme
 ├── src/
+│   ├── UiServiceProvider.php    Laravel service provider (auto-discovered)
 │   ├── TokenCompiler.php        Compiles themes to CSS + Tailwind preset
+│   ├── Components/              Blade component classes (x-choredon::…)
+│   │   ├── DateNav.php
+│   │   └── Support/             Pure-PHP helpers for component logic (unit-testable)
+│   │       ├── DateNavState.php
+│   │       └── Granularity.php
 │   └── Filament/
 │       └── ChoredonColors.php   Filament colour role registration
+├── resources/
+│   └── views/
+│       └── components/          Blade templates for x-choredon::… components
+│           └── date-nav.blade.php
 ├── bin/
 │   └── choredon-compile         CLI for running the compiler
 ├── dist/                        Generated + maintained outputs
@@ -33,6 +48,8 @@ choredon-ui/
 │   ├── tailwind-preset.js       Tailwind preset consuming the tokens (generated)
 │   ├── flux-adapter.css         Flux theming (hand-maintained)
 │   └── filament-adapter.css     Filament theming (hand-maintained)
+├── tests/
+│   └── Unit/                    Pest unit tests for Support/ helpers
 └── docs/
     └── reference.html           Standalone page showing all tokens rendered
 ```
@@ -130,6 +147,76 @@ public function panel(Panel $panel): Panel
 
 Filament's six colour roles (primary, gray, danger, info, success, warning) are registered with ramps derived from Choredon's palette. The adapter CSS handles typography, surface treatments, sidebar/topbar treatment, and input styling on top.
 
+## Blade components
+
+Choredon ships Blade components in the `choredon` namespace. They are auto-registered by `Choredon\Ui\UiServiceProvider` via Laravel's package discovery — no manual provider wiring needed in the consumer.
+
+### `<x-choredon::date-nav>`
+
+Reusable prev / label / today / next date navigation. Use it wherever a page needs to let the user move between days, weeks, or months.
+
+```blade
+<x-choredon::date-nav
+    :current-date="$currentDate"
+    wire:model.live="currentDate"
+    granularity="week"
+    :today="$todayInSydney"
+    :min="$earliestAllowed ?? null"
+    :max="$latestAllowed ?? null"
+    :show-today="true"
+    aria-label="Select roster week"
+/>
+```
+
+**Why both `:current-date` and `wire:model`?** Blade components receive constructor arguments from explicit attributes only — they can't read the value of a `wire:model` property from the parent's context. `:current-date` gives the component the value to display; `wire:model.live` gives it the property name to write back to when prev/next/today is clicked.
+
+Parent Livewire component:
+
+```php
+use Illuminate\Support\Carbon;
+use Livewire\Attributes\Url;
+
+#[Url(as: 'week')]
+public string $currentDate = '';
+
+public string $todayInSydney;
+
+public function mount(): void
+{
+    $this->todayInSydney = Carbon::now('Australia/Sydney')->toDateString();
+    $this->currentDate = $this->currentDate ?: $this->todayInSydney;
+}
+```
+
+**Props:**
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `wire:model` | string | — | Two-way bound Y-m-d date string. `.live` recommended. |
+| `granularity` | `'day'\|'week'\|'month'` | `'week'` | Step size for prev/next and label shape. |
+| `today` | Y-m-d | server `date()` | What "today" means in the app's business timezone. |
+| `min` | Y-m-d | — | Clamp previous-button availability at this date. |
+| `max` | Y-m-d | — | Clamp next-button availability at this date. |
+| `show-today` | bool | `true` | Whether to render the "Today" button. |
+| `aria-label` | string | `'Date navigation'` | Accessible label for the root `role="group"`. |
+
+**Semantics:**
+
+- The component always emits a Y-m-d string (never an ISO-week string). For week-granular consumers, the emitted date can be any day within the week; the consumer's Livewire component should normalise with `Carbon::parse($date)->startOfWeek(Carbon::MONDAY)` when querying roster data.
+- Week boundaries are ISO (Monday → Sunday).
+- Prev/Next step by 1 day / 7 days / 1 month respectively, preserving day-of-week or day-of-month where sensible.
+- Clicking the label opens a Flux calendar popover; selecting a day updates the bound property and closes the popover.
+
+**Accessibility:**
+
+Targets WCAG 2.1 AA. Inherits focus management, Escape-to-close, click-outside dismiss, ARIA state, and reduced-motion handling from the underlying Flux components. On top of that, the component adds `role="group"` with a consumer-supplied label, verbose aria-labels on every button (e.g. "Previous week", "Today, current week shown", "Select week. Currently Week of Monday 20 April 2026 to Sunday 26 April 2026."), an `aria-live="polite"` region that announces the full period whenever it changes, and 44×44 px touch targets via the `--size-touch-target` token.
+
+**Timezone:** the component itself is timezone-agnostic. The consumer is responsible for supplying `:today` in the app's business timezone. If omitted, it falls back to the server's configured timezone — usually fine, but explicit is safer.
+
+**API limitations (v0.2.0):**
+
+The component does not support a custom label slot or `:label` prop; label text is always derived from the current date and granularity. It also does not dispatch a named Livewire event on navigation — all signalling happens through the `wire:model`-bound property. If a consumer needs to react to a navigation change, observe the bound property (e.g., Livewire's `updated<Property>(…)` hook on the parent). Both capabilities are tracked in BACKLOG for future versions if a real use case surfaces.
+
 ## Authoring a new theme (future salons)
 
 To onboard a salon with their own visual identity for the embedded customer surface:
@@ -149,10 +236,10 @@ To onboard a salon with their own visual identity for the embedded customer surf
 - CSS variables strip the `semantic.` prefix so consumers write `--color-interactive-primary`, not `--semantic-color-interactive-primary`.
 - Component authors reference semantic (and occasionally component) tokens. Never palette.
 
-## What's next (v0.2+)
+## What's next (v0.3+)
 
 - Dark theme (Wingbase as surface base, Vellum as text)
-- Domain-specific Blade components for salon concepts Flux doesn't cover
+- Further Blade composites as consumer needs surface them — salon-domain (`appointment-card`, `stylist-roster`, `service-pill`) and generic app-UI (as patterns emerge)
 - Reference app as a runnable Laravel app rather than a standalone HTML file
 - Icon set from the brand doc's geometric family
 - Density tokens for data-dense admin views

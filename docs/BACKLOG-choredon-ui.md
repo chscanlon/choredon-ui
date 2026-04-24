@@ -9,7 +9,7 @@ Conventions:
 
 ---
 
-## v0.2 planned
+## v0.3 planned
 
 The next minor version. Items here are already agreed to be in scope but not yet implemented.
 
@@ -25,15 +25,15 @@ This is the single biggest piece of work in v0.2. Involves:
 - Updating the reference page to include a theme toggle
 - Verifying every existing component renders correctly in dark
 
-### Hand-rolled Blade components for salon-specific composites
+### Further Blade composites
 
-Flux covers the UI primitives, but salon concepts that don't have a Flux equivalent will need Blade components shipped from `choredon/ui`. Candidates based on current thinking:
+v0.2.0 introduced the Blade-components layer with `<x-choredon::date-nav>` (a generic app-UI composite). Future composites land the same way — either salon-domain or generic — as consumer needs surface them. Candidates from the original v0.2 sketch, still pending:
 
-- `<x-choredon::appointment-card>` — a customer-facing appointment summary
+- `<x-choredon::appointment-card>` — customer-facing appointment summary
 - `<x-choredon::stylist-roster>` — employee schedule grid snippet
 - `<x-choredon::service-pill>` — compact service-type indicator
 
-None are urgent — they only get built when a consumer actually needs them. Listed here to document the intended growth direction.
+None are urgent — they only get built when a consumer actually needs them. Listed here to document the intended growth direction. See the policy-decisions section below for what earns a composite its place in the package.
 
 ### Reference app as a runnable Laravel app
 
@@ -71,6 +71,14 @@ The Filament adapter has existed since v0.1.0 but hasn't been tested in a real s
 ---
 
 ## Nice-to-haves (not v0.2, possibly later)
+
+### `<x-choredon::date-nav>` `:label-formatter` closure prop
+
+Allow consumers to pass a closure that receives the current date + granularity and returns a custom label string, overriding the built-in `DateNavState::shortLabel()` output. Deferred in v0.2.0 on the basis that the built-in labels (`Mon 20 Apr 2026`, `20 – 26 Apr 2026`, `April 2026`) cover current consumer needs and no custom-formatting use case has surfaced. Design note: keep the verbose (screen-reader) label computed by DateNavState regardless — consumers override the visible label only.
+
+### `<x-choredon::date-nav>` `:dispatch-event` opt-in
+
+Allow consumers to pass an event name (e.g. `:dispatch-event="roster-week-changed"`) that the component dispatches via Livewire whenever `currentDate` changes from a nav interaction. Deferred in v0.2.0 because `wire:model` + the parent's `updated<Property>()` hook covers every current consumer need. Only add if a real requirement emerges (e.g., sibling Livewire components on the same page that need to react without being tightly coupled to the roster component's state).
 
 ### Wordmark with circle-triangle 'o' treatment
 
@@ -111,6 +119,12 @@ Tailwind's `gray-*` ramp is left at Tailwind defaults rather than being mapped o
 ### Semantic tokens only for components
 
 Blade components and adapter CSS should reference semantic tokens (`--color-interactive-primary`, `--color-surface-base`) or component-layer tokens — never palette tokens directly (`--palette-triangle`, `--palette-vellum`). Palette tokens are theme-private.
+
+### Blade-components layer covers both salon-domain AND generic app composites
+
+Established with v0.2.0. The original v0.1 framing said Blade components are "only for domain-specific composites (e.g., appointment cards, stylist rosters) that Flux doesn't provide." When `<x-choredon::date-nav>` was being planned, this framing was revisited: date navigation is not a salon concept, but it *is* a composite that wraps multiple Flux primitives (button + dropdown + popover + calendar) with shared behavior (prev/next math, period snapping, today state, WCAG 2.1 AA annotations) — and having every consuming app re-implement it defeats the design-system goal.
+
+The layer's policy is now: composites earn their place when (a) they'd otherwise be duplicated across more than one page or more than one consuming app, and (b) they're non-trivial enough that re-implementation would produce inconsistency. Either salon-domain or generic app-UI qualifies. When in doubt, prefer using Flux directly.
 
 ### currentColor for structural logo elements
 

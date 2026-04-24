@@ -1,10 +1,20 @@
 # Choredon UI Changelog
 
-## v0.2.0 — Filament adapter rewrite for v4/v5
+## v0.2.0 — Filament adapter rewrite + first Blade components
+
+Two independent pieces of work land in this release: the Filament adapter is rewritten for v4/v5, and the package grows a Blade-components layer with `<x-choredon::date-nav>` as its first tenant.
+
+### Added — Blade components layer
+
+- **`Choredon\Ui\UiServiceProvider`** — new Laravel service provider, auto-discovered via `extra.laravel.providers` in `composer.json`. Registers the `choredon` view namespace (from `resources/views/`) and the `choredon` Blade component namespace (from `Choredon\Ui\Components\`). Consumer apps now get `<x-choredon::…>` component resolution without manual wiring.
+- **`<x-choredon::date-nav>`** — reusable date navigation (prev / label / today / next) for week-granular, month-granular, and day-granular contexts. Composes `flux:button`, `flux:dropdown`, `flux:popover`, and `flux:calendar`. Emits Y-m-d strings via `wire:model`. Targets WCAG 2.1 AA (role=group, verbose aria-labels, aria-live period announcements, 44px touch targets, focus return on picker close). Timezone-agnostic; consumers supply `:today` in their business timezone.
+- **`Choredon\Ui\Components\Support\DateNavState`** — pure-PHP date-math helper. Unit-tested (28 tests, 54 assertions) without booting Laravel; only depends on Carbon (transitively via `illuminate/support`).
+- **Policy clarification (README + BACKLOG):** the Blade-components layer now covers *composites* in two categories — (1) salon-domain composites that Flux doesn't provide (`appointment-card`, `stylist-roster`, etc., still pending), and (2) generic app-UI composites that wrap multiple Flux primitives with shared behavior (date navigation is the first of these). Previously the README implied category 2 was out of scope.
+- **Pest test harness.** `tests/Unit/` with `pestphp/pest` as a dev dep. Unit tests run without any Laravel boot — they exercise pure PHP classes that don't depend on the framework.
+
+### Changed — Filament adapter rewrite for v4/v5
 
 Scoped update to prepare for installing Choredon into smart-salon (Filament v5.3 on Tailwind v4). The v0.1 Filament adapter was written for Filament v3 on Tailwind v3 and would not apply correctly to a v4/v5 panel.
-
-### Changed
 
 - **Filament adapter rewritten for v4/v5 on Tailwind v4.** New `dist/filament-adapter.css` targets current Filament class hooks and uses Tailwind v4 CSS-first configuration (`@theme` blocks instead of tailwind.config.js). The v0.1 adapter is preserved alongside as `filament-adapter.css.v01-backup` for reference; do not import it.
 - **Primary button text colour made explicit.** Filament v4 introduced automatic contrast-based text colouring that can produce dark text on medium-dark backgrounds. The adapter now forces `--color-text-on-primary` (pale Vellum) on `.fi-btn.fi-color-primary` regardless of the contrast picker.
