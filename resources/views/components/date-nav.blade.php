@@ -90,6 +90,12 @@
     </flux:dropdown>
 
     {{-- Today --}}
+    {{--
+        Below the sm breakpoint (640px) the "Today" word is hidden so the four
+        controls fit cleanly on narrow viewports (~390px). The calendar-days
+        icon remains as the affordance; aria-label keeps the button announceable
+        to screen readers regardless of viewport.
+    --}}
     @if($showToday)
         <flux:button
             type="button"
@@ -99,7 +105,7 @@
             :aria-label="$state->todayAriaLabel()"
             :wire:click="$todayClick"
         >
-            {{ __('Today') }}
+            <span class="hidden sm:inline">{{ __('Today') }}</span>
         </flux:button>
     @endif
 
