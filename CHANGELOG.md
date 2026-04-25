@@ -1,5 +1,20 @@
 # Choredon UI Changelog
 
+## v0.2.1 — Date-nav polish
+
+Fixes:
+
+- Stabilised label slot width so chevrons and Today button don't shift between
+  date navigations. The label slot now has a min-width sized for the widest
+  possible label across all granularities (`min-w-[24ch]`), with the label
+  centred within it.
+- Resolved mobile overflow at ~390px viewports. The Today button collapses
+  to an icon-only treatment below the sm breakpoint (640px); the
+  `calendar-days` icon remains as the affordance, with the existing
+  aria-label preserving screen-reader semantics.
+
+No API changes. Consumers on `^0.2.0` will pick this up automatically.
+
 ## v0.2.0 — Filament adapter rewrite + first Blade components
 
 Two independent pieces of work land in this release: the Filament adapter is rewritten for v4/v5, and the package grows a Blade-components layer with `<x-choredon::date-nav>` as its first tenant.

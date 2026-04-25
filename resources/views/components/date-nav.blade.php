@@ -43,13 +43,20 @@
     />
 
     {{-- Label / picker trigger --}}
+    {{--
+        min-w-[24ch] sizes the label slot for the widest possible label across
+        all granularities (week cross-month/year is the longest, ~23-24ch),
+        keeping the chevrons and Today button at stable horizontal positions
+        as the user pages through dates. justify-center keeps the label
+        visually balanced within the fixed slot.
+    --}}
     <flux:dropdown position="bottom" align="center" gap="4">
         <flux:button
             type="button"
             variant="subtle"
             :aria-label="$state->pickerAriaLabel()"
             aria-haspopup="dialog"
-            class="choredon-date-nav__label"
+            class="choredon-date-nav__label min-w-[24ch] justify-center"
         >
             {{ $state->shortLabel() }}
         </flux:button>
@@ -83,6 +90,12 @@
     </flux:dropdown>
 
     {{-- Today --}}
+    {{--
+        Below the sm breakpoint (640px) the "Today" word is hidden so the four
+        controls fit cleanly on narrow viewports (~390px). The calendar-days
+        icon remains as the affordance; aria-label keeps the button announceable
+        to screen readers regardless of viewport.
+    --}}
     @if($showToday)
         <flux:button
             type="button"
@@ -92,7 +105,7 @@
             :aria-label="$state->todayAriaLabel()"
             :wire:click="$todayClick"
         >
-            {{ __('Today') }}
+            <span class="hidden sm:inline">{{ __('Today') }}</span>
         </flux:button>
     @endif
 
