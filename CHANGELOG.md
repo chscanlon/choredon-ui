@@ -6,7 +6,7 @@ Fixes:
 
 - Stabilised label slot width so chevrons and Today button don't shift between
   date navigations. The label slot now has a min-width sized for the widest
-  possible label across all granularities (`min-w-[18ch]`), with the label
+  possible label across all granularities (`min-w-[24ch]`), with the label
   centred within it.
 - Resolved mobile overflow at ~390px viewports. The Today button collapses
   to an icon-only treatment below the sm breakpoint (640px); the
