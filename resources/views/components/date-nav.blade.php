@@ -43,13 +43,20 @@
     />
 
     {{-- Label / picker trigger --}}
+    {{--
+        min-w-[18ch] sizes the label slot for the widest possible label across
+        all granularities (week cross-month/year is the longest, ~17-18ch),
+        keeping the chevrons and Today button at stable horizontal positions
+        as the user pages through dates. justify-center keeps the label
+        visually balanced within the fixed slot.
+    --}}
     <flux:dropdown position="bottom" align="center" gap="4">
         <flux:button
             type="button"
             variant="subtle"
             :aria-label="$state->pickerAriaLabel()"
             aria-haspopup="dialog"
-            class="choredon-date-nav__label"
+            class="choredon-date-nav__label min-w-[18ch] justify-center"
         >
             {{ $state->shortLabel() }}
         </flux:button>
